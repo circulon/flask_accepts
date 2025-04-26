@@ -397,6 +397,6 @@ if __name__ == "__main__":
 To install _flask_accepts_ for development, fork or clone the repository, create virtual environment
 and while active install dev requirements.
 
-    (venv) [user@station flask_accepts]$ pip install -r dev-requirements.txt
+    (venv) [user@station flask_accepts]$ pip install -r requirements.txt -r dev-requirements.txt
 
 Plesae follow contribution [guidelines](https://opensource.guide/how-to-contribute/), add comments and document your changes before providing a pull request.
