@@ -2,16 +2,10 @@ from typing import Optional, Type, Union
 
 from flask_restx import fields as fr, inputs
 from marshmallow import fields as ma
-from marshmallow import __version_info__ as marshmallow_version
 from marshmallow.schema import Schema, SchemaMeta
-
 
 _ma_key_for_fr_example_key = "dump_default"
 _ma_key_for_fr_default_key = "load_default"
-if marshmallow_version < (3, 13, 0):
-    _ma_key_for_fr_example_key = "default"
-    _ma_key_for_fr_default_key = "missing"
-
 
 def unpack_list(val, api, model_name: str = None, operation: str = "dump"):
     model_name = model_name or get_default_model_name()

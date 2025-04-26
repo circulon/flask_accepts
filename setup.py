@@ -11,10 +11,10 @@ setup(
     ext_modules=[],
     packages=find_packages(),
     install_requires=[
-        "marshmallow>=3.17.0",
         "flask-restx==1.1.0; python_version < '3.8'",
         "flask-restx>=1.2.0; python_version >= '3.8'",
         "werkzeug>=2,<3; python_version < '3.8'",
         "werkzeug>=3,<4; python_version >= '3.8'",
+        "marshmallow>=3.26,<4",
     ],
 )
