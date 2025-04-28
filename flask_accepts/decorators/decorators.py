@@ -282,7 +282,8 @@ def responds(
     ordered = None
     if schema:
         schema = _get_or_create_schema(schema, many=many)
-        ordered = schema.ordered
+        if hasattr(schema, "ordered"):
+            ordered = schema.ordered
 
     model_name = model_name or get_default_model_name(schema)
     model_from_parser = _model_from_parser(model_name=model_name, parser=_parser)
