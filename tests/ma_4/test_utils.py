@@ -70,10 +70,7 @@ def test_unpack_nested_self():
 
     class IntegerSchema(Schema):
         my_int = ma.Integer()
-        children = ma.Nested(lambda: IntegerSchema(only=("my_int",)))
-
-
-        # children = ma.Nested(self.__name__, exclude=["children"])
+        children = ma.Nested("self", exclude=["children"])
 
     schema = IntegerSchema()
 
@@ -88,9 +85,7 @@ def test_unpack_nested_self_many():
 
     class IntegerSchema(Schema):
         my_int = ma.Integer()
-        children = ma.Nested(lambda: IntegerSchema(only=("my_int",)), many=True)
-
-        # children = ma.Nested("self", exclude=["children"], many=True)
+        children = ma.Nested("self", exclude=["children"], many=True)
 
     schema = IntegerSchema()
 

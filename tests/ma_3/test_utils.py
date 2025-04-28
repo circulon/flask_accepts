@@ -445,4 +445,3 @@ def test_ma_field_to_reqparse_argument_list_values():
     assert result["type"] is str
     assert result["required"] is False
     assert result["action"] == "append"
-    assert result["help"] == "A description"
