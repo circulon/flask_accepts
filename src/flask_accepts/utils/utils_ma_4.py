@@ -1,9 +1,10 @@
 from typing import Optional, Type, Union
 
-from flask_restx import fields as fr, inputs
+from flask_restx import fields as fr
+from flask_restx import inputs
 from marshmallow import fields as ma
+from marshmallow.constants import missing as ma_missing
 from marshmallow.schema import Schema, SchemaMeta
-
 
 _ma_dump_default_key = "dump_default"
 _ma_load_default_key = "load_default"
@@ -25,9 +26,10 @@ def unpack_nested(val, api, model_name: str = None, operation: str = "dump"):
     if val.many:
         return fr.List(
             fr.Nested(
-                map_type(val.nested, api, model_name, operation), **_ma_field_to_fr_field(val)
+                map_type(val.nested, api, model_name, operation),
+                **_ma_field_to_fr_field(val),
+            )
         )
-    )
 
     return fr.Nested(
         map_type(val.nested, api, model_name, operation), **_ma_field_to_fr_field(val)
@@ -172,8 +174,10 @@ def get_default_model_name(schema: Optional[Union[Schema, Type[Schema]]] = None)
 def _ma_field_to_fr_field(value: ma.Field) -> dict:
     fr_field_parameters = {}
 
-    if hasattr(value, _ma_dump_default_key):
-            # and type(getattr(value, _ma_dump_default_key)) != ma.utils._Missing:
+    if (
+        hasattr(value, _ma_dump_default_key)
+        and type(getattr(value, _ma_dump_default_key)) != ma_missing
+    ):
         fr_field_parameters["example"] = getattr(value, _ma_dump_default_key)
 
     if hasattr(value, "required"):
@@ -182,8 +186,10 @@ def _ma_field_to_fr_field(value: ma.Field) -> dict:
     if hasattr(value, "metadata") and "description" in value.metadata:
         fr_field_parameters["description"] = value.metadata["description"]
 
-    if hasattr(value, _ma_load_default_key):
-            # and type(getattr(value, _ma_load_default_key)) != ma.utils._Missing:
+    if (
+        hasattr(value, _ma_load_default_key)
+        and type(getattr(value, _ma_load_default_key)) != ma_missing
+    ):
         fr_field_parameters["default"] = getattr(value, _ma_load_default_key)
 
     return fr_field_parameters
@@ -192,15 +198,13 @@ def _ma_field_to_fr_field(value: ma.Field) -> dict:
 def map_type(val, api, model_name, operation):
     value_type = type(val)
 
-    if isinstance(value_type, lambda:
-
     if value_type in type_map:
         return type_map[value_type](val, api, model_name, operation)
 
     if issubclass(value_type, SchemaMeta) or issubclass(value_type, Schema):
         return type_map[Schema](val, api, model_name, operation)
 
-    raise TypeError('Unknown type for marshmallow model field was used.')
+    raise TypeError("Unknown type for marshmallow model field was used.")
 
 
 type_map_ma_to_reqparse = {
@@ -208,7 +212,7 @@ type_map_ma_to_reqparse = {
     ma.Boolean: inputs.boolean,
     ma.Int: int,
     ma.Integer: int,
-    ma.Float: float
+    ma.Float: float,
 }
 
 

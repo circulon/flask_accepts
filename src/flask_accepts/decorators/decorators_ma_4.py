@@ -1,14 +1,16 @@
-from typing import Type, Union, Dict
-from flask import jsonify
-from werkzeug.wrappers import Response
-from werkzeug.exceptions import BadRequest, InternalServerError
-from marshmallow import Schema, EXCLUDE, RAISE
-from marshmallow.exceptions import ValidationError
+from typing import Dict, Type, Union
 
+from flask import jsonify
+from flask_restx import fields, inputs, reqparse
 from flask_restx.model import Model
-from flask_restx import fields, reqparse, inputs
+from marshmallow import EXCLUDE, RAISE, Schema
+from marshmallow.exceptions import ValidationError
+from werkzeug.exceptions import BadRequest, InternalServerError
+from werkzeug.wrappers import Response
+
 from ..utils import for_swagger
-from ..utils.utils_ma_4 import get_default_model_name, is_list_field, ma_field_to_reqparse_argument
+from ..utils.utils_ma_4 import (get_default_model_name, is_list_field,
+                                ma_field_to_reqparse_argument)
 
 
 def accepts(
@@ -82,7 +84,9 @@ def accepts(
 
     # Handles query params schema.
     if query_params_schema:
-        query_params_schema = _get_or_create_schema(query_params_schema, unknown=EXCLUDE)
+        query_params_schema = _get_or_create_schema(
+            query_params_schema, unknown=EXCLUDE
+        )
 
         for name, field in query_params_schema.fields.items():
             params = {**ma_field_to_reqparse_argument(field), "location": "values"}
@@ -141,8 +145,8 @@ def accepts(
             # Handle Marshmallow schema for query params
             if query_params_schema:
                 request_args = _convert_multidict_values_to_schema(
-                    request.args,
-                    query_params_schema)
+                    request.args, query_params_schema
+                )
 
                 try:
                     obj = query_params_schema.load(request_args)
@@ -161,8 +165,8 @@ def accepts(
             # Handle Marshmallow schema for headers
             if headers_schema:
                 request_headers = _convert_multidict_values_to_schema(
-                    request.headers,
-                    headers_schema)
+                    request.headers, headers_schema
+                )
 
                 try:
                     obj = headers_schema.load(request_headers)
@@ -181,8 +185,8 @@ def accepts(
             # Handle Marshmallow schema for form data
             if form_schema:
                 request_form = _convert_multidict_values_to_schema(
-                    request.form,
-                    form_schema)
+                    request.form, form_schema
+                )
 
                 try:
                     obj = form_schema.load(request_form)
@@ -291,7 +295,7 @@ def responds(
 
         @wraps(func)
         def inner(*args, **kwargs):
-            nonlocal  schema
+            nonlocal schema
             nonlocal status_code
 
             rv = func(*args, **kwargs)
@@ -330,9 +334,12 @@ def responds(
                 serialized = {envelope: serialized}
 
             if skip_none:
+
                 def remove_none(obj):
                     if isinstance(obj, list):
-                        return [remove_none(entry) for entry in obj if entry is not None]
+                        return [
+                            remove_none(entry) for entry in obj if entry is not None
+                        ]
                     if isinstance(obj, dict):
                         result = {}
                         for key, value in obj.items():
@@ -360,7 +367,9 @@ def responds(
                     api_model = [api_model]
 
                 inner = _document_like_marshal_with(
-                    api_model, status_code=status_code, description=description,
+                    api_model,
+                    status_code=status_code,
+                    description=description,
                 )(inner)
 
             elif _parser:
@@ -480,10 +489,7 @@ def _convert_multidict_values_to_schema(multidict, schema):
     """
     result = {}
 
-    fields = {
-        field.data_key or name: field
-        for name, field in schema.fields.items()
-    }
+    fields = {field.data_key or name: field for name, field in schema.fields.items()}
     for key, value in multidict.items():
         # If the key isn't defined in the schema, then insert it into the
         # result set as is and let marshmallow validation raise an error.

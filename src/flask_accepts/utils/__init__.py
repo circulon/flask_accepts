@@ -1,4 +1,5 @@
 from importlib.metadata import version
+
 ma_version = version("marshmallow")
 ver_parts = ma_version.split(".")
 
