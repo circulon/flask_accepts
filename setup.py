@@ -1,6 +1,6 @@
 # Copyright Alan (AJ) Pryor, Jr. 2018
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="flask_accepts",
@@ -9,7 +9,6 @@ setup(
     version="2.0.0",
     description="Easy, opinionated Flask input/output handling with Flask-restx and Marshmallow",
     ext_modules=[],
-    packages=find_packages(),
     package_dir={"": "src"},
     install_requires=[
         "marshmallow>=3.17",
