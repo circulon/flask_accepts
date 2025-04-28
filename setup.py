@@ -12,8 +12,8 @@ setup(
     packages=find_packages(),
     package_dir={"": "src"},
     install_requires=[
-        "marshmallow>=3.26",
-        "flask-restx>=1.2",
+        "marshmallow>=3.17",
+        "flask-restx>=1.3",
         "werkzeug>=3,<4",
     ],
     classifiers=[
