@@ -6,8 +6,8 @@ from flask_restx import Resource, Api
 from marshmallow import Schema, fields
 from werkzeug.exceptions import InternalServerError
 
-from flask_accepts.decorators import accepts, responds
-from flask_accepts.tests.fixtures import app, client  # noqa
+from src.flask_accepts.decorators import accepts, responds
+from .fixtures import app, client  # noqa
 
 
 def test_responds(app, client):  # noqa

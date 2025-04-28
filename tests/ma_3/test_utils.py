@@ -8,13 +8,13 @@ from marshmallow.schema import SchemaMeta
 from flask import Flask
 from flask_restx import Api, fields as fr, namespace
 
-import flask_accepts.utils as utils
+from src.flask_accepts.utils import utils
 
 
 def test_unpack_list():
     app = Flask(__name__)
     api = Api(app)
-    with patch("flask_accepts.utils.unpack_list", wraps=utils.unpack_list) as mock:
+    with patch("src.flask_accepts.utils.utils.unpack_list", wraps=utils.unpack_list) as mock:
         result = utils.unpack_list(ma.List(ma.Integer()), api=api)
 
         assert isinstance(result, fr.List)
@@ -25,8 +25,8 @@ def test_unpack_list_of_list():
     app = Flask(__name__)
     api = Api(app)
     with patch(
-        "flask_accepts.utils.unpack_list", wraps=utils.unpack_list
-    ) as mock, patch.dict("flask_accepts.utils.type_map", {ma.List: mock}):
+        "src.flask_accepts.utils.utils.unpack_list", wraps=utils.unpack_list
+    ) as mock, patch.dict("src.flask_accepts.utils.utils.type_map", {ma.List: mock}):
 
         result = utils.unpack_list(ma.List(ma.List(ma.Integer())), api=api)
 
@@ -125,11 +125,11 @@ def test_get_default_model_name_that_does_not_end_in_schema():
 
 
 def test_get_default_model_name_default_names():
-    from flask_accepts.utils import num_default_models
+    from src.flask_accepts.utils.utils_ma_3 import _num_default_v3_models
 
     for model_num in range(5):
         result = utils.get_default_model_name()
-        expected = f"DefaultResponseModel_{model_num + num_default_models}"
+        expected = f"DefaultResponseModel_{model_num + _num_default_v3_models}"
         assert result == expected
 
 
@@ -441,7 +441,7 @@ def test_ma_field_to_reqparse_argument_list_values():
     assert result["action"] == "append"
     assert "help" not in result
 
-    result = utils.ma_field_to_reqparse_argument(ma.List(ma.String(), description="A description"))
+    result = utils.ma_field_to_reqparse_argument(ma.List(ma.String()))
     assert result["type"] is str
     assert result["required"] is False
     assert result["action"] == "append"

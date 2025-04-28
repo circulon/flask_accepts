@@ -1,15 +1,14 @@
-from collections import OrderedDict
 from typing import Type, Union, Dict
 from flask import jsonify
 from werkzeug.wrappers import Response
 from werkzeug.exceptions import BadRequest, InternalServerError
 from marshmallow import Schema, EXCLUDE, RAISE
-from marshmallow.fields import List
 from marshmallow.exceptions import ValidationError
 
 from flask_restx.model import Model
 from flask_restx import fields, reqparse, inputs
-from flask_accepts.utils import for_swagger, get_default_model_name, is_list_field, ma_field_to_reqparse_argument
+from ..utils import for_swagger
+from ..utils.utils_ma_4 import get_default_model_name, is_list_field, ma_field_to_reqparse_argument
 
 
 def accepts(
@@ -279,10 +278,8 @@ def responds(
     for qp in query_params:
         _parser.add_argument(**qp, location="values")
 
-    ordered = None
     if schema:
         schema = _get_or_create_schema(schema, many=many)
-        ordered = schema.ordered
 
     model_name = model_name or get_default_model_name(schema)
     model_from_parser = _model_from_parser(model_name=model_name, parser=_parser)
@@ -330,7 +327,7 @@ def responds(
                 serialized = marshal(rv, model_from_parser)
 
             if envelope:
-                serialized = OrderedDict([(envelope, serialized)]) if ordered else {envelope: serialized}
+                serialized = {envelope: serialized}
 
             if skip_none:
                 def remove_none(obj):

@@ -9,7 +9,7 @@ def create_app(env=None):
 
 @pytest.fixture
 def app():
-    return create_app("test")
+    return create_app("test_marshmallow_3")
 
 
 @pytest.fixture

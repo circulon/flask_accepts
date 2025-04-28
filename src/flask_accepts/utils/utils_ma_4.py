@@ -2,15 +2,11 @@ from typing import Optional, Type, Union
 
 from flask_restx import fields as fr, inputs
 from marshmallow import fields as ma
-from marshmallow import __version_info__ as marshmallow_version
 from marshmallow.schema import Schema, SchemaMeta
 
 
-_ma_key_for_fr_example_key = "dump_default"
-_ma_key_for_fr_default_key = "load_default"
-if marshmallow_version < (3, 13, 0):
-    _ma_key_for_fr_example_key = "default"
-    _ma_key_for_fr_default_key = "missing"
+_ma_dump_default_key = "dump_default"
+_ma_load_default_key = "load_default"
 
 
 def unpack_list(val, api, model_name: str = None, operation: str = "dump"):
@@ -121,7 +117,7 @@ type_map = {
     ma.Date: fr.Date,
     ma.DateTime: fr.DateTime,
     # For some reason, fr.Decimal has no example parameter, so use Float instead
-    ma.Decimal: fr.Float,
+    ma.Decimal: fr.Decimal,
     ma.Dict: fr.Raw,
     ma.Email: fr.String,
     ma.Float: fr.Float,
@@ -156,7 +152,7 @@ type_map.update(
     }
 )
 
-num_default_models = 0
+_num_default_v4_models = 0
 
 
 def get_default_model_name(schema: Optional[Union[Schema, Type[Schema]]] = None) -> str:
@@ -167,18 +163,18 @@ def get_default_model_name(schema: Optional[Union[Schema, Type[Schema]]] = None)
             # It is a type itself
             return "".join(schema.__name__.rsplit("Schema", 1))
 
-    global num_default_models
-    name = f"DefaultResponseModel_{num_default_models}"
-    num_default_models += 1
+    global _num_default_v4_models
+    name = f"DefaultResponseModel_{_num_default_v4_models}"
+    _num_default_v4_models += 1
     return name
 
 
 def _ma_field_to_fr_field(value: ma.Field) -> dict:
     fr_field_parameters = {}
 
-    if hasattr(value, _ma_key_for_fr_example_key) \
-            and type(getattr(value, _ma_key_for_fr_example_key)) != ma.utils._Missing:
-        fr_field_parameters["example"] = getattr(value, _ma_key_for_fr_example_key)
+    if hasattr(value, _ma_dump_default_key):
+            # and type(getattr(value, _ma_dump_default_key)) != ma.utils._Missing:
+        fr_field_parameters["example"] = getattr(value, _ma_dump_default_key)
 
     if hasattr(value, "required"):
         fr_field_parameters["required"] = value.required
@@ -186,15 +182,17 @@ def _ma_field_to_fr_field(value: ma.Field) -> dict:
     if hasattr(value, "metadata") and "description" in value.metadata:
         fr_field_parameters["description"] = value.metadata["description"]
 
-    if hasattr(value, _ma_key_for_fr_default_key) \
-            and type(getattr(value, _ma_key_for_fr_default_key)) != ma.utils._Missing:
-        fr_field_parameters["default"] = getattr(value, _ma_key_for_fr_default_key)
+    if hasattr(value, _ma_load_default_key):
+            # and type(getattr(value, _ma_load_default_key)) != ma.utils._Missing:
+        fr_field_parameters["default"] = getattr(value, _ma_load_default_key)
 
     return fr_field_parameters
 
 
 def map_type(val, api, model_name, operation):
     value_type = type(val)
+
+    if isinstance(value_type, lambda:
 
     if value_type in type_map:
         return type_map[value_type](val, api, model_name, operation)

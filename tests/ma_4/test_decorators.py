@@ -2,9 +2,9 @@ from flask_restx import Resource, Api
 from marshmallow import Schema, fields
 from werkzeug.datastructures import MultiDict
 
-from flask_accepts.decorators import accepts, responds
-from flask_accepts.decorators.decorators import _convert_multidict_values_to_schema
-from flask_accepts.tests.fixtures import app, client  # noqa
+from src.flask_accepts.decorators import accepts, responds
+from src.flask_accepts.decorators.decorators_ma_4 import _convert_multidict_values_to_schema
+from .fixtures import app, client  # noqa
 
 
 def test_schema_generates_correct_swagger(app, client):  # noqa
