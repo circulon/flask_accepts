@@ -9,11 +9,16 @@ setup(
     version="2.0.0",
     description="Easy, opinionated Flask input/output handling with Flask-restx and Marshmallow",
     ext_modules=[],
-    package_dir={"": "src"},
     install_requires=[
         "marshmallow>=3.17",
         "flask-restx>=1.3",
         "werkzeug>=3,<4",
+    ],
+    package_dir={"": "src"},
+    packages=[
+        "flask_accepts",
+        "flask_accepts.decorators",
+        "flask_accepts.utils",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.8",
