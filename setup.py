@@ -4,6 +4,7 @@ from setuptools import setup
 
 setup(
     name="flask_accepts",
+    python_requires='>=3.8',
     author='Alan "AJ" Pryor, Jr.',
     author_email="apryor6@gmail.com",
     version="2.0.0",
